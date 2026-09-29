@@ -1,0 +1,175 @@
+# PART 10. DATA INTEGRITY
+
+## 10.1 Purpose
+
+Data integrity ensures that information stored in the National Robotics Competition database remains accurate, valid, consistent, and reliable.
+
+The database uses several types of constraints:
+
+* Primary Key;
+* Foreign Key;
+* NOT NULL;
+* UNIQUE;
+* CHECK;
+* DEFAULT;
+* generated columns.
+
+---
+
+## 10.2 Entity Integrity
+
+Every table contains a primary key that uniquely identifies each record.
+
+Example:
+
+```sql
+CREATE TABLE school (
+    school_id SERIAL PRIMARY KEY,
+    school_name VARCHAR(150) NOT NULL UNIQUE,
+    city VARCHAR(100) NOT NULL,
+    address VARCHAR(200)
+);
+```
+
+The `school_id` uniquely identifies every school.
+
+The database does not allow duplicate primary key values.
+
+---
+
+## 10.3 Referential Integrity
+
+Foreign keys ensure that relationships between tables remain valid.
+
+For example:
+
+```sql
+school_id INT NOT NULL
+    REFERENCES school(school_id)
+```
+
+The `participant.school_id` value must refer to an existing school.
+
+This prevents orphan records.
+
+---
+
+## 10.4 Domain Integrity
+
+Domain integrity controls the values that can be stored in specific columns.
+
+For example, participant age can be restricted:
+
+```sql
+age INT CHECK (age BETWEEN 10 AND 25)
+```
+
+Scores can also be restricted:
+
+```sql
+technical_score NUMERIC(5,2)
+CHECK (technical_score BETWEEN 0 AND 40)
+```
+
+```sql
+creativity_score NUMERIC(5,2)
+CHECK (creativity_score BETWEEN 0 AND 30)
+```
+
+```sql
+performance_score NUMERIC(5,2)
+CHECK (performance_score BETWEEN 0 AND 30)
+```
+
+---
+
+## 10.5 Duplicate Prevention
+
+Unique constraints prevent duplicate information.
+
+Example:
+
+```sql
+email VARCHAR(150) UNIQUE
+```
+
+and:
+
+```sql
+team_name VARCHAR(150) UNIQUE
+```
+
+Therefore, two participants cannot use the same unique email address and two teams cannot have the same team name.
+
+---
+
+## 10.6 Invalid Operation 1 — Invalid Foreign Key
+
+The following operation should fail because school ID 9999 does not exist.
+
+```sql
+INSERT INTO participant
+(first_name, last_name, school_id, age, email)
+VALUES
+('Test', 'Student', 9999, 18, 'test@example.com');
+```
+
+Expected result:
+
+```text
+ERROR: insert or update on table "participant"
+violates foreign key constraint
+```
+
+This demonstrates referential integrity.
+
+---
+
+## 10.7 Invalid Operation 2 — Invalid Score
+
+The following operation should fail because the technical score is outside the allowed range.
+
+```sql
+INSERT INTO score
+(round_id, team_id, technical_score, creativity_score, performance_score)
+VALUES
+(1, 1, 100, 20, 20);
+```
+
+Expected result:
+
+```text
+ERROR: new row violates check constraint
+```
+
+This demonstrates domain integrity.
+
+---
+
+## 10.8 Invalid Operation 3 — Duplicate Team
+
+The following operation should fail if the team name already exists.
+
+```sql
+INSERT INTO team
+(school_id, team_name, coach_name)
+VALUES
+(1, 'Astana Robotics', 'Test Coach');
+```
+
+Expected result:
+
+```text
+ERROR: duplicate key value violates unique constraint
+```
+
+This demonstrates duplicate prevention.
+
+---
+
+## 10.9 Integrity Summary
+
+
+## 10.10 Conclusion
+
+The database uses multiple integrity mechanisms to prevent invalid, incomplete, duplicate, or inconsistent data. These constraints protect the reliability of the National Robotics Competition database.
