@@ -1,0 +1,5 @@
+The National Robotics Competition database is a relational PostgreSQL database designed to manage information about participants, schools, teams, robots, competitions, rounds, judges, scores, and awards.
+
+The database applies relational database design principles, primary and foreign keys, integrity constraints, normalization, SQL queries, analytical functions, views, and reporting.
+
+The completed project demonstrates the full database development process from requirements analysis and ER modeling to implementation, data manipulation, analysis, reporting, and final documentation.
