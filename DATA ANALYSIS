@@ -1,0 +1,131 @@
+# PART 08. DATA ANALYSIS
+
+## 8.1 Purpose
+
+The purpose of this part is to analyze the data stored in the National Robotics Competition database using SQL aggregate functions, grouping, filtering, and joins.
+
+The analysis helps identify information about participants, teams, competitions, scores, judges, and awards.
+
+---
+
+## 8.2 Analytical Question 1
+
+### How many participants are registered in the database?
+
+```sql
+SELECT COUNT(*) AS total_participants
+FROM participant;
+```
+
+### Expected result
+
+The query returns the total number of participants registered in the database.
+
+---
+
+## 8.3 Analytical Question 2
+
+### What is the average total score received by each team?
+
+```sql
+SELECT
+    t.team_name,
+    ROUND(AVG(s.total_score), 2) AS average_score
+FROM team t
+JOIN score s ON t.team_id = s.team_id
+GROUP BY t.team_id, t.team_name
+ORDER BY average_score DESC;
+```
+
+This query calculates the average score for every team and sorts the results from the highest average score to the lowest.
+
+---
+
+## 8.4 Analytical Question 3
+
+### Which teams received scores higher than 80 points?
+
+```sql
+SELECT
+    t.team_name,
+    s.total_score
+FROM team t
+JOIN score s ON t.team_id = s.team_id
+WHERE s.total_score > 80
+ORDER BY s.total_score DESC;
+```
+
+This query identifies teams that received a total score above 80 points.
+
+---
+
+## 8.5 Analytical Question 4
+
+### How many participants are there in each school?
+
+```sql
+SELECT
+    sc.school_name,
+    COUNT(p.participant_id) AS participant_count
+FROM school sc
+LEFT JOIN participant p
+    ON sc.school_id = p.school_id
+GROUP BY sc.school_id, sc.school_name
+ORDER BY participant_count DESC;
+```
+
+This query shows the number of registered participants for every school.
+
+---
+
+## 8.6 Analytical Question 5
+
+### What is the highest, lowest, and average score?
+
+```sql
+SELECT
+    MAX(total_score) AS highest_score,
+    MIN(total_score) AS lowest_score,
+    ROUND(AVG(total_score), 2) AS average_score
+FROM score;
+```
+
+This query provides three important statistical indicators:
+
+* highest score;
+* lowest score;
+* average score.
+
+---
+
+## 8.7 Additional Analysis
+
+### Number of teams participating in each competition
+
+```sql
+SELECT
+    c.competition_name,
+    COUNT(ct.team_id) AS number_of_teams
+FROM competition c
+LEFT JOIN competition_team ct
+    ON c.competition_id = ct.competition_id
+GROUP BY c.competition_id, c.competition_name
+ORDER BY number_of_teams DESC;
+```
+
+### Number of awards received by each team
+
+```sql
+SELECT
+    t.team_name,
+    COUNT(a.award_id) AS award_count
+FROM team t
+LEFT JOIN award a
+    ON t.team_id = a.team_id
+GROUP BY t.team_id, t.team_name
+ORDER BY award_count DESC;
+```
+
+## 8.8 Conclusion
+
+SQL analysis makes it possible to transform stored competition data into useful information. Aggregate functions such as `COUNT`, `AVG`, `MAX`, and `MIN`, together with `GROUP BY`, `ORDER BY`, and `JOIN`, provide information about participation, team performance, competitions, and awards.
