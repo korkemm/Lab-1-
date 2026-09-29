@@ -1,0 +1,320 @@
+# PART 14. FINAL DATABASE STRUCTURE
+
+## 14.1 Database Name
+
+```text
+national_robotics_competition
+```
+
+The database stores information related to schools, participants, teams, robots, competitions, rounds, judges, scores, and awards.
+
+---
+
+# 14.2 Final Tables
+
+The database contains 13 main tables.
+
+| No. | Table              | Description                      |
+| --: | ------------------ | -------------------------------- |
+|   1 | `school`           | Stores school information        |
+|   2 | `participant`      | Stores competition participants  |
+|   3 | `team`             | Stores robotics teams            |
+|   4 | `team_participant` | Connects participants and teams  |
+|   5 | `category`         | Stores competition categories    |
+|   6 | `competition`      | Stores competition information   |
+|   7 | `competition_team` | Connects competitions and teams  |
+|   8 | `round`            | Stores competition rounds        |
+|   9 | `robot`            | Stores robots belonging to teams |
+|  10 | `judge`            | Stores judge information         |
+|  11 | `round_judge`      | Connects judges and rounds       |
+|  12 | `score`            | Stores team scores               |
+|  13 | `award`            | Stores competition awards        |
+
+---
+
+# 14.3 Primary Keys
+
+Each table contains a primary key.
+
+| Table              | Primary Key                 |
+| ------------------ | --------------------------- |
+| `school`           | `school_id`                 |
+| `participant`      | `participant_id`            |
+| `team`             | `team_id`                   |
+| `team_participant` | `(team_id, participant_id)` |
+| `category`         | `category_id`               |
+| `competition`      | `competition_id`            |
+| `competition_team` | `(competition_id, team_id)` |
+| `round`            | `round_id`                  |
+| `robot`            | `robot_id`                  |
+| `judge`            | `judge_id`                  |
+| `round_judge`      | `(round_id, judge_id)`      |
+| `score`            | `score_id`                  |
+| `award`            | `award_id`                  |
+
+---
+
+# 14.4 Foreign Keys
+
+The major foreign key relationships are:
+
+```text
+participant.school_id
+        ↓
+school.school_id
+```
+
+```text
+team.school_id
+        ↓
+school.school_id
+```
+
+```text
+team_participant.team_id
+        ↓
+team.team_id
+```
+
+```text
+team_participant.participant_id
+        ↓
+participant.participant_id
+```
+
+```text
+robot.team_id
+        ↓
+team.team_id
+```
+
+```text
+competition.category_id
+        ↓
+category.category_id
+```
+
+```text
+competition_team.competition_id
+        ↓
+competition.competition_id
+```
+
+```text
+competition_team.team_id
+        ↓
+team.team_id
+```
+
+```text
+round.competition_id
+        ↓
+competition.competition_id
+```
+
+```text
+round_judge.round_id
+        ↓
+round.round_id
+```
+
+```text
+round_judge.judge_id
+        ↓
+judge.judge_id
+```
+
+```text
+score.round_id
+        ↓
+round.round_id
+```
+
+```text
+score.team_id
+        ↓
+team.team_id
+```
+
+```text
+award.competition_id
+        ↓
+competition.competition_id
+```
+
+```text
+award.team_id
+        ↓
+team.team_id
+```
+
+---
+
+# 14.5 Main Relationships
+
+The database contains both one-to-many and many-to-many relationships.
+
+### One-to-Many
+
+```text
+SCHOOL 1 ──── M PARTICIPANT
+SCHOOL 1 ──── M TEAM
+TEAM 1 ──── M ROBOT
+CATEGORY 1 ──── M COMPETITION
+COMPETITION 1 ──── M ROUND
+ROUND 1 ──── M SCORE
+TEAM 1 ──── M SCORE
+COMPETITION 1 ──── M AWARD
+TEAM 1 ──── M AWARD
+```
+
+### Many-to-Many
+
+```text
+PARTICIPANT M ──── N TEAM
+        through TEAM_PARTICIPANT
+```
+
+```text
+COMPETITION M ──── N TEAM
+        through COMPETITION_TEAM
+```
+
+```text
+ROUND M ──── N JUDGE
+        through ROUND_JUDGE
+```
+
+---
+
+# 14.6 Constraints
+
+The database uses the following constraints:
+
+* `PRIMARY KEY`
+* `FOREIGN KEY`
+* `NOT NULL`
+* `UNIQUE`
+* `CHECK`
+* `DEFAULT`
+* generated columns
+
+These constraints help maintain accurate and consistent information.
+
+---
+
+# 14.7 Generated Score
+
+The `score` table contains a generated `total_score`.
+
+```sql
+total_score =
+technical_score
++ creativity_score
++ performance_score
+```
+
+The value is calculated automatically by PostgreSQL.
+
+---
+
+# 14.8 Views
+
+The database contains the following views:
+
+### `team_performance`
+
+Provides:
+
+* number of scores;
+* average score;
+* highest score;
+* lowest score.
+
+### `competition_teams_view`
+
+Provides:
+
+* competition;
+* date;
+* location;
+* team;
+* school.
+
+### `participant_school_view`
+
+Provides:
+
+* participant;
+* age;
+* email;
+* school;
+* city.
+
+---
+
+# 14.9 Main SQL Operations
+
+The project demonstrates:
+
+```sql
+SELECT
+INSERT
+UPDATE
+DELETE
+WHERE
+ORDER BY
+LIKE
+BETWEEN
+IN
+COUNT
+SUM
+AVG
+MIN
+MAX
+GROUP BY
+HAVING
+INNER JOIN
+LEFT JOIN
+subqueries
+aggregate analysis
+views
+```
+
+---
+
+# 14.10 Database Contents
+
+The database was designed with realistic sample data representing a national robotics competition.
+
+The sample dataset includes:
+
+* schools;
+* participants;
+* teams;
+* categories;
+* competitions;
+* rounds;
+* robots;
+* judges;
+* scores;
+* awards;
+* team registrations;
+* team memberships;
+* judge assignments.
+
+---
+
+# 14.11 Normalization
+
+The database follows the principles of:
+
+```text
+1NF
+2NF
+3NF
+```
+
+Data is separated into logical entities to reduce redundancy and prevent update, insertion, and deletion anomalies.
+
+---
