@@ -1,0 +1,115 @@
+# PART 12. MODIFICATION SCENARIOS
+
+## 12.1 Purpose
+
+This section demonstrates how the database can be modified when requirements change.
+
+The following scenarios show how new information can be inserted, updated, or removed without redesigning the entire database.
+
+---
+
+## 12.2 Scenario 1 — Add a New Participant
+
+A new participant joins the competition.
+
+```sql
+INSERT INTO participant
+(school_id, first_name, last_name, age, email)
+VALUES
+(1, 'Aruzhan', 'Bekova', 17, 'aruzhan.bekova@example.com');
+```
+
+The participant is now stored in the database and can later be assigned to a team.
+
+---
+
+## 12.3 Scenario 2 — Add a Participant to a Team
+
+The new participant joins an existing team.
+
+```sql
+INSERT INTO team_participant
+(team_id, participant_id, role)
+VALUES
+(1, 21, 'Programmer');
+```
+
+This creates a relationship between the participant and the team.
+
+---
+
+## 12.4 Scenario 3 — Update a Team Coach
+
+Suppose the coach of a team changes.
+
+```sql
+UPDATE team
+SET coach_name = 'Aidos Saparov'
+WHERE team_id = 1;
+```
+
+Only the required record is modified.
+
+---
+
+## 12.5 Scenario 4 — Update a Robot Status
+
+Suppose a robot is repaired and becomes active.
+
+```sql
+UPDATE robot
+SET status = 'Active'
+WHERE robot_id = 1;
+```
+
+This changes the robot's current status.
+
+---
+
+## 12.6 Scenario 5 — Register a Team for a New Competition
+
+A team can be registered for another competition.
+
+```sql
+INSERT INTO competition_team
+(competition_id, team_id, registration_date)
+VALUES
+(5, 1, CURRENT_TIMESTAMP);
+```
+
+The existing team can therefore participate in another competition without creating a duplicate team record.
+
+---
+
+## 12.7 Additional Modification — Update a Score
+
+If an authorized correction is required, a score can be updated.
+
+```sql
+UPDATE score
+SET technical_score = 37.00,
+    creativity_score = 27.00,
+    performance_score = 28.00
+WHERE score_id = 1;
+```
+
+The generated `total_score` is automatically recalculated by PostgreSQL.
+
+---
+
+## 12.8 Modification Principles
+
+The database structure allows changes without unnecessary duplication.
+
+For example:
+
+* a participant can change teams;
+* a team can enter another competition;
+* a coach can be changed;
+* robot status can be updated;
+* competition scores can be corrected;
+* new competitions can be added.
+
+## 12.9 Conclusion
+
+The normalized database structure makes it possible to modify individual records while preserving relationships and data integrity. Primary keys, foreign keys, unique constraints, and check constraints continue to protect the database during modifications.
