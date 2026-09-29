@@ -1,0 +1,196 @@
+# PART 11. NORMALIZATION
+
+## 11.1 Purpose
+
+Normalization is the process of organizing database tables to reduce data redundancy and prevent insertion, update, and deletion anomalies.
+
+The National Robotics Competition database is designed according to the principles of:
+
+* First Normal Form (1NF);
+* Second Normal Form (2NF);
+* Third Normal Form (3NF).
+
+---
+
+## 11.2 First Normal Form — 1NF
+
+A table satisfies 1NF when:
+
+1. Each field contains a single atomic value.
+2. There are no repeating groups.
+3. Each record is uniquely identifiable.
+
+### Example
+
+Instead of storing multiple participants in one field:
+
+```text
+Team: RoboStars
+Participants: Aida, Bekzat, Dana
+```
+
+the database stores participants separately:
+
+```text
+participant
+-------------------------------
+participant_id
+first_name
+last_name
+school_id
+```
+
+and their team membership is stored in:
+
+```text
+team_participant
+-------------------------------
+team_id
+participant_id
+role
+```
+
+Therefore, each field contains one atomic value.
+
+---
+
+## 11.3 Second Normal Form — 2NF
+
+A table satisfies 2NF when:
+
+1. It is already in 1NF.
+2. Every non-key attribute depends on the whole primary key.
+
+This is especially important for associative tables with composite primary keys.
+
+For example:
+
+```text
+TEAM_PARTICIPANT
+-------------------------
+team_id
+participant_id
+role
+```
+
+The primary key is:
+
+```text
+(team_id, participant_id)
+```
+
+The `role` depends on the complete combination of team and participant.
+
+Therefore, the table satisfies 2NF.
+
+---
+
+## 11.4 Third Normal Form — 3NF
+
+A table satisfies 3NF when:
+
+1. It is already in 2NF.
+2. Non-key attributes do not depend on other non-key attributes.
+
+For example, participant information is stored as:
+
+```text
+PARTICIPANT
+-------------------------
+participant_id
+school_id
+first_name
+last_name
+age
+email
+```
+
+School information is stored separately:
+
+```text
+SCHOOL
+-------------------------
+school_id
+school_name
+city
+address
+```
+
+The participant table stores only `school_id`, rather than repeating the school name and address for every participant.
+
+This eliminates transitive dependencies.
+
+---
+
+## 11.5 Example of an Unnormalized Table
+
+An unnormalized design might look like this:
+
+```text
+COMPETITION_DATA
+------------------------------------------------------------
+competition_name
+school_name
+participant_1
+participant_2
+participant_3
+team_name
+judge_1
+judge_2
+score
+award
+```
+
+This design has several problems:
+
+* repeating groups;
+* duplicated school information;
+* duplicated judge information;
+* difficult updates;
+* possible data inconsistency;
+* limited scalability.
+
+---
+
+## 11.6 Normalized Design
+
+The information is separated into related tables:
+
+```text
+SCHOOL
+PARTICIPANT
+TEAM
+TEAM_PARTICIPANT
+CATEGORY
+COMPETITION
+COMPETITION_TEAM
+ROUND
+ROBOT
+JUDGE
+ROUND_JUDGE
+SCORE
+AWARD
+```
+
+Each table represents one main concept.
+
+Relationships are implemented using primary and foreign keys.
+
+---
+
+## 11.7 Benefits of Normalization
+
+Normalization provides:
+
+* reduced data redundancy;
+* better data consistency;
+* easier updates;
+* easier maintenance;
+* fewer insertion anomalies;
+* fewer deletion anomalies;
+* fewer update anomalies;
+* clearer relationships between entities.
+
+## 11.8 Conclusion
+
+The National Robotics Competition database follows the principles of 1NF, 2NF, and 3NF. The normalized structure separates independent entities and uses relationships between tables instead of storing repeated information.
